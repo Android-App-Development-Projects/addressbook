@@ -10,6 +10,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -17,11 +18,12 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-public class DisplayContact extends AppCompatActivity {
+public class DisplayContact extends AppCompatActivity implements View.OnClickListener {
 
     //Change name of below variable to small and meaningful varible name
     int from_Where_I_Am_Coming = 0;
     private DatabaseHelper myDataBase;
+    Button saveContactBtn;
 
     EditText nameET;
     EditText phoneET;
@@ -43,9 +45,12 @@ public class DisplayContact extends AppCompatActivity {
 
         nameET = findViewById(R.id.editTextName);
         phoneET = findViewById(R.id.editTextPhoneNo);
-        emailET = findViewById(R.id.editTextPhoneNo);
+        emailET = findViewById(R.id.editTextEmail);
         addressET = findViewById(R.id.editTextAddress);
         cityET = findViewById(R.id.editTextCity);
+
+        saveContactBtn = findViewById(R.id.saveContactButton);
+        saveContactBtn.setOnClickListener(this);
 
         myDataBase = new DatabaseHelper(this);
 
@@ -54,7 +59,7 @@ public class DisplayContact extends AppCompatActivity {
             int value = extras.getInt(("id"));
 
             if(value>0){
-                //Means that is veiw part not not add address part
+                //Means veiw address case not not add address case
                 Cursor rs = myDataBase.getData(value);
                 id_To_Update = value;
                 rs.moveToFirst();
@@ -71,7 +76,7 @@ public class DisplayContact extends AppCompatActivity {
                     rs.close();
                 }
 
-                Button saveContactBtn = findViewById(R.id.saveContactButton);
+
                 saveContactBtn.setVisibility(View.INVISIBLE);
 
                 nameET.setText((CharSequence) nameFromDB);
@@ -143,7 +148,7 @@ public class DisplayContact extends AppCompatActivity {
             cityET.setFocusableInTouchMode(true);
             cityET.setClickable(true);
             return true;
-        } else if (item.getItemId() == R.id.Edit_Contact) {
+        } else if (item.getItemId() == R.id.Delete_Contact) {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setMessage(R.string.deleteContact)
                     .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
@@ -169,34 +174,35 @@ public class DisplayContact extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void run(View view){
-        Bundle extras = getIntent().getExtras();
-        if(extras != null){
-            int value = extras.getInt("id");
-            if (value>0){
-                if(myDataBase.updateAddress(id_To_Update, nameET.getText().toString(),
-                        phoneET.getText().toString(), emailET.getText().toString(),
-                        addressET.getText().toString(), cityET.getText().toString())){
-                    Toast.makeText(getApplicationContext(), "Updated", Toast.LENGTH_SHORT).show();
-                    Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                    startActivity(intent);
+    @Override
+    public void onClick(View view) {
+            Bundle extras = getIntent().getExtras();
+            if(extras != null){
+                int value = extras.getInt("id");
+                if (value>0){
+                    if(myDataBase.updateAddress(id_To_Update, nameET.getText().toString(),
+                            phoneET.getText().toString(), emailET.getText().toString(),
+                            addressET.getText().toString(), cityET.getText().toString())){
+                        Toast.makeText(getApplicationContext(), "Updated", Toast.LENGTH_SHORT).show();
+                        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                        startActivity(intent);
+                    }
+                    else {
+                        Toast.makeText(getApplicationContext(), "Not Updated", Toast.LENGTH_SHORT).show();
+                    }
                 }
                 else {
-                    Toast.makeText(getApplicationContext(), "Not Updated", Toast.LENGTH_SHORT).show();
+                    if(myDataBase.insertAddress(nameET.getText().toString(),
+                            phoneET.getText().toString(), emailET.getText().toString(),
+                            addressET.getText().toString(), cityET.getText().toString())){
+                        Toast.makeText(getApplicationContext(), "Address Added", Toast.LENGTH_SHORT).show();
+                    }
+                    else {
+                        Toast.makeText(getApplicationContext(), "Address Not Added", Toast.LENGTH_SHORT).show();
+                    }
                 }
+                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                startActivity(intent);
             }
-            else {
-                if(myDataBase.insertAddress(nameET.getText().toString(),
-                        phoneET.getText().toString(), emailET.getText().toString(),
-                        addressET.getText().toString(), cityET.getText().toString())){
-                    Toast.makeText(getApplicationContext(), "Address Added", Toast.LENGTH_SHORT).show();
-                }
-                else {
-                    Toast.makeText(getApplicationContext(), "Address Not Added", Toast.LENGTH_SHORT).show();
-                }
-            }
-            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-            startActivity(intent);
         }
-    }
 }

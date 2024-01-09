@@ -17,14 +17,23 @@
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
 
     <ScrollView
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/scroll_view">
 
-        <ListView
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/list_view"/>
+            android:orientation="vertical">
+
+            <ListView
+                android:layout_width="match_parent"
+                android:layout_height="500dp"
+                android:divider="#b5b5b5"
+                android:dividerHeight="1dp"
+                android:id="@+id/list_view"/>
+        </LinearLayout>
+
     </ScrollView>
 
 </LinearLayout>

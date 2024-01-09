@@ -61,7 +61,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public Cursor getData(int id){
         SQLiteDatabase sqLiteDatabase = this.getReadableDatabase();
-        Cursor res = sqLiteDatabase.rawQuery("SELECT * FROM "+ ADDRESSBOOK_TABLE_NAME + "WHERE id = " + id + "", null);
+        Cursor res = sqLiteDatabase.rawQuery("SELECT * FROM "+ ADDRESSBOOK_TABLE_NAME + " " + "WHERE id = " + id + "", null);
         return  res;
     }
 
@@ -92,7 +92,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public ArrayList<String> getAllAddresses(){
         ArrayList<String> arrayList = new ArrayList<String>();
         SQLiteDatabase sqLiteDatabase = this.getWritableDatabase();
-        Cursor res = sqLiteDatabase.rawQuery("SELECT * FROM " + ADDRESSBOOK_TABLE_NAME, null);
+        Cursor res = sqLiteDatabase.rawQuery("SELECT * FROM " + ADDRESSBOOK_TABLE_NAME+"", null);
         res.moveToFirst();
 
         while (res.isAfterLast() == false){
